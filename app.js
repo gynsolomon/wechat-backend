@@ -10,6 +10,7 @@ var crypto = require('crypto');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var wechats = require('./routes/wechats');
 
 var app = express();
 
@@ -27,22 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
-app.use('/wechat', function (req,res) {
-    var query = req.query;
-    var signature = query.signature;
-    var timestamp = query.timestamp;
-    var nonce = query.nonce;
-
-    var shasum = crypto.createHash('sha1');
-    var arr = ['solomon', timestamp, nonce].sort();
-    shasum.update(arr.join(''));
-    if(shasum.digest('hex') === signature){
-        res.writeHead(200);
-        res.end(req.query.echostr);
-    }else{
-        res.sendStatus(500);
-    }
-});
+app.use('/wechat', wechats);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
